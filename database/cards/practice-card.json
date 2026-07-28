@@ -1,0 +1,271 @@
+{
+    "name": "TileTutor Practice Card",
+    "variant": "american",
+    "year": 2026,
+    "categories": [
+        {
+            "name": "Year",
+            "hands": [
+                {
+                    "line": "FF 2026(A) 2026(B) DDDD(A)",
+                    "points": 25,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" }, "B": { "kind": "suit" } },
+                    "constraints": [{ "distinct": ["A", "B"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "zero" },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 6 }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": 2 },
+                            { "t": "zero" },
+                            { "t": "num", "suit": "B", "n": 2 },
+                            { "t": "num", "suit": "B", "n": 6 }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" }
+                        ]
+                    ]
+                },
+                {
+                    "line": "FFFF 2026(A) 2222(B) 66(C)",
+                    "points": 30,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" }, "B": { "kind": "suit" }, "C": { "kind": "suit" } },
+                    "constraints": [{ "distinct": ["A", "B", "C"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }, { "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "zero" },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 6 }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": 2 },
+                            { "t": "num", "suit": "B", "n": 2 },
+                            { "t": "num", "suit": "B", "n": 2 },
+                            { "t": "num", "suit": "B", "n": 2 }
+                        ],
+                        [
+                            { "t": "num", "suit": "C", "n": 6 },
+                            { "t": "num", "suit": "C", "n": 6 }
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Evens",
+            "hands": [
+                {
+                    "line": "FF 2222(A) 4444(A) 6666(B)",
+                    "points": 25,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" }, "B": { "kind": "suit" } },
+                    "constraints": [{ "distinct": ["A", "B"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 4 },
+                            { "t": "num", "suit": "A", "n": 4 },
+                            { "t": "num", "suit": "A", "n": 4 },
+                            { "t": "num", "suit": "A", "n": 4 }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": 6 },
+                            { "t": "num", "suit": "B", "n": 6 },
+                            { "t": "num", "suit": "B", "n": 6 },
+                            { "t": "num", "suit": "B", "n": 6 }
+                        ]
+                    ]
+                },
+                {
+                    "line": "FF 2222(A) 6666(A) 88(B) DD(B)",
+                    "points": 30,
+                    "concealed": true,
+                    "variables": { "A": { "kind": "suit" }, "B": { "kind": "suit" } },
+                    "constraints": [{ "distinct": ["A", "B"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": 8 },
+                            { "t": "num", "suit": "B", "n": 8 }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "B" },
+                            { "t": "dragon", "suit": "B" }
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Consecutive Run",
+            "hands": [
+                {
+                    "line": "FF XXXX(A) YYYY(A) ZZZZ(B)",
+                    "points": 25,
+                    "concealed": false,
+                    "variables": {
+                        "A": { "kind": "suit" },
+                        "B": { "kind": "suit" },
+                        "X": { "kind": "number", "domain": [1, 2, 3, 4, 5, 6, 7] }
+                    },
+                    "constraints": [{ "distinct": ["A", "B"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 2 } }
+                        ]
+                    ]
+                },
+                {
+                    "line": "FFFF XXXX(A) YYY(B) ZZZ(C)",
+                    "points": 35,
+                    "concealed": true,
+                    "variables": {
+                        "A": { "kind": "suit" },
+                        "B": { "kind": "suit" },
+                        "C": { "kind": "suit" },
+                        "X": { "kind": "number", "domain": [1, 2, 3, 4, 5, 6, 7] }
+                    },
+                    "constraints": [{ "distinct": ["A", "B", "C"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }, { "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "B", "n": { "var": "X", "off": 1 } }
+                        ],
+                        [
+                            { "t": "num", "suit": "C", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "C", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "C", "n": { "var": "X", "off": 2 } }
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Like Numbers",
+            "hands": [
+                {
+                    "line": "FF XXXX(A) XXXX(B) XXXX(C)",
+                    "points": 25,
+                    "concealed": false,
+                    "variables": {
+                        "A": { "kind": "suit" },
+                        "B": { "kind": "suit" },
+                        "C": { "kind": "suit" },
+                        "X": { "kind": "number", "domain": "odd" }
+                    },
+                    "constraints": [{ "distinct": ["A", "B", "C"] }],
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } }
+                        ],
+                        [
+                            { "t": "num", "suit": "B", "n": { "var": "X" } },
+                            { "t": "num", "suit": "B", "n": { "var": "X" } },
+                            { "t": "num", "suit": "B", "n": { "var": "X" } },
+                            { "t": "num", "suit": "B", "n": { "var": "X" } }
+                        ],
+                        [
+                            { "t": "num", "suit": "C", "n": { "var": "X" } },
+                            { "t": "num", "suit": "C", "n": { "var": "X" } },
+                            { "t": "num", "suit": "C", "n": { "var": "X" } },
+                            { "t": "num", "suit": "C", "n": { "var": "X" } }
+                        ]
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Winds and Dragons",
+            "hands": [
+                {
+                    "line": "NEWS DDDD(A) DDDD(B) NN",
+                    "points": 30,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" }, "B": { "kind": "suit" } },
+                    "constraints": [{ "distinct": ["A", "B"] }],
+                    "groups": [
+                        [
+                            { "t": "wind", "w": "N" },
+                            { "t": "wind", "w": "E" },
+                            { "t": "wind", "w": "W" },
+                            { "t": "wind", "w": "S" }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "B" },
+                            { "t": "dragon", "suit": "B" },
+                            { "t": "dragon", "suit": "B" },
+                            { "t": "dragon", "suit": "B" }
+                        ],
+                        [
+                            { "t": "wind", "w": "N" },
+                            { "t": "wind", "w": "N" }
+                        ]
+                    ]
+                }
+            ]
+        }
+    ]
+}
