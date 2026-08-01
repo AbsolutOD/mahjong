@@ -13,12 +13,12 @@
     <div class="space-y-4">
         @foreach ($this->breakdown($hand) as $group)
             <div>
-                <div class="flex gap-1">
+                <div class="flex flex-wrap gap-1">
                     @foreach ($group['tiles'] as $tile)
-                        <x-prototype-tile :symbol="$tile['symbol']" :variable="$tile['variable']" :assigned="$tile['assigned']" />
+                        <x-prototype-tile size="lg" :symbol="$tile['symbol']" :variable="$tile['variable']" :assigned="$tile['assigned']" />
                     @endforeach
                 </div>
-                <p class="mt-1.5 text-sm">{{ $group['description'] }}</p>
+                <p class="mt-2 text-sm">{{ $group['description'] }}</p>
                 <p class="text-xs {{ $group['jokers'] ? 'text-amber-600 dark:text-amber-400' : 'text-zinc-500' }}">
                     {{ $group['jokers'] ? 'Jokers may substitute here' : 'No jokers here' }}
                 </p>

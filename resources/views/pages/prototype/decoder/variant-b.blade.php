@@ -53,7 +53,8 @@
         </div>
 
         {{-- Breakdown panel (desktop) --}}
-        <aside class="sticky top-6 hidden h-fit w-96 shrink-0 xl:block">
+        {{-- Big tiles make a six-group hand taller than the viewport, so the panel scrolls itself --}}
+        <aside class="sticky top-6 hidden h-fit max-h-[calc(100vh-4rem)] w-[27rem] shrink-0 overflow-y-auto xl:block">
             @includeWhen($this->hand, 'pages.prototype.decoder.panel', ['hand' => $this->hand])
         </aside>
     </div>
