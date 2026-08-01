@@ -14,6 +14,7 @@ Route::prefix('{current_team}')
 // PROTOTYPE — throwaway UX exploration for issue #9. Never enabled in production.
 if (! app()->isProduction()) {
     Route::livewire('prototype/line-decoder', 'pages::prototype.line-decoder')->name('prototype.line-decoder');
+    Route::livewire('prototype/tiles', 'pages::prototype.tiles')->name('prototype.tiles');
 }
 
 Route::middleware(['auth'])->group(function () {
