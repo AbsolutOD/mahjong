@@ -11,6 +11,11 @@ Route::prefix('{current_team}')
         Route::view('dashboard', 'dashboard')->name('dashboard');
     });
 
+// PROTOTYPE — throwaway UX exploration for issue #9. Never enabled in production.
+if (! app()->isProduction()) {
+    Route::livewire('prototype/line-decoder', 'pages::prototype.line-decoder')->name('prototype.line-decoder');
+}
+
 Route::middleware(['auth'])->group(function () {
     Route::livewire('invitations/{invitation}/accept', 'pages::teams.accept-invitation')->name('invitations.accept');
 });
