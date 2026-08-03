@@ -12,6 +12,14 @@ enum Wind: string
     case South = 'south';
 
     /**
+     * Get the display label for the wind.
+     */
+    public function label(): string
+    {
+        return ucfirst($this->value);
+    }
+
+    /**
      * Get the single-letter symbol the card prints for this wind.
      */
     public function symbol(): string

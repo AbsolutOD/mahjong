@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Middleware\EnsureTeamMembership;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
+
+Route::get('tiles', fn (Request $request) => view('tiles', [
+    'assign' => $request->boolean('assign'),
+]))->name('tiles');
 
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
