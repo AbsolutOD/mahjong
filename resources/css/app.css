@@ -28,6 +28,29 @@
     --color-accent-foreground: var(--color-white);
 }
 
+/*
+ * Tile faces. `static` because the SVG reads these through var() rather than
+ * through a utility class, and Tailwind drops theme variables no class uses.
+ *
+ * `unbound` is reserved: grey, and only grey, means the card has not chosen a
+ * suit for a slot yet — see App\Enums\FaceTone.
+ */
+@theme static {
+    --color-tile-body: #faf7ef;
+    --color-tile-edge: #c9c2b2;
+
+    --color-tile-dots: #0284c7;
+    --color-tile-bams: #059669;
+    --color-tile-craks: #e11d48;
+    --color-tile-wind: #475569;
+    --color-tile-red: #dc2626;
+    --color-tile-green: #15803d;
+    --color-tile-soap: #0891b2;
+    --color-tile-flower: #d97706;
+    --color-tile-joker: #7c3aed;
+    --color-tile-unbound: #a1a1aa;
+}
+
 @layer theme {
     .dark {
         --color-accent: var(--color-white);

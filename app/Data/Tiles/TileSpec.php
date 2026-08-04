@@ -63,6 +63,9 @@ abstract readonly class TileSpec
             TileType::Wind => new WindTile(Wind::fromSymbol($data['w'])),
             TileType::Flower => new FlowerTile,
             TileType::Zero => new ZeroTile,
+            TileType::Joker => throw new InvalidArgumentException(
+                'A card line never asks for a joker; joker eligibility is derived from the group.'
+            ),
         };
     }
 }
