@@ -10,6 +10,9 @@ Route::get('tiles', fn (Request $request) => view('tiles', [
     'assign' => $request->boolean('assign'),
 ]))->name('tiles');
 
+/** Learning the card needs no account, so the decoder sits in front of the wall. */
+Route::livewire('card', 'pages::card.line-decoder')->name('card');
+
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {

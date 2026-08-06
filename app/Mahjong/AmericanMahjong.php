@@ -34,6 +34,25 @@ class AmericanMahjong
     }
 
     /**
+     * Get the table word for a grouping of the given size.
+     *
+     * These words all mean *identical* tiles, so only a group that passes
+     * {@see TileGroup::isIdentical()} has earned one; anything else is counted.
+     */
+    public static function groupName(int $size): string
+    {
+        return match ($size) {
+            1 => 'Single',
+            2 => 'Pair',
+            3 => 'Pung',
+            4 => 'Kong',
+            5 => 'Quint',
+            6 => 'Sextet',
+            default => $size.' tiles',
+        };
+    }
+
+    /**
      * Determine whether jokers may stand in for tiles in the given group.
      *
      * A joker substitutes only inside a grouping of three or more *identical*
