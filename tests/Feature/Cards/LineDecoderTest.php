@@ -80,8 +80,8 @@ test('the first category and its first hand are selected on arrival', function (
     $card = decoderCard();
 
     Livewire::test('pages::card.line-decoder')
-        ->assertSet('categoryId', $card->categories->first()->id)
-        ->assertSet('handId', $card->categories->first()->hands->first()->id);
+        ->assertSet('categorySlug', $card->categories->first()->slug)
+        ->assertSet('handSlug', $card->categories->first()->hands->first()->slug);
 });
 
 test('selection lives in the url so a line can be linked to', function () {
@@ -89,12 +89,24 @@ test('selection lives in the url so a line can be linked to', function () {
     $evens = $card->categories->last();
 
     Livewire::withUrlParams([
-        'categoryId' => $evens->id,
-        'handId' => $evens->hands->first()->id,
+        'category' => $evens->slug,
+        'hand' => $evens->hands->first()->slug,
     ])
         ->test('pages::card.line-decoder')
-        ->assertSet('categoryId', $evens->id)
+        ->assertSet('categorySlug', $evens->slug)
         ->assertSee('Concealed — no exposures');
+});
+
+test('a link to a line the card no longer prints falls back instead of showing a different line', function () {
+    $card = decoderCard();
+    $year = $card->categories->first();
+
+    Livewire::withUrlParams([
+        'category' => $year->slug,
+        'hand' => 'a-line-this-card-does-not-print',
+    ])
+        ->test('pages::card.line-decoder')
+        ->assertSet('handSlug', $year->hands->first()->slug);
 });
 
 test('choosing a category moves the selection to its first hand', function () {
@@ -102,9 +114,9 @@ test('choosing a category moves the selection to its first hand', function () {
     $evens = $card->categories->last();
 
     Livewire::test('pages::card.line-decoder')
-        ->call('selectCategory', $evens->id)
-        ->assertSet('categoryId', $evens->id)
-        ->assertSet('handId', $evens->hands->first()->id);
+        ->call('selectCategory', $evens->slug)
+        ->assertSet('categorySlug', $evens->slug)
+        ->assertSet('handSlug', $evens->hands->first()->slug);
 });
 
 test('a hand stays selected when clicked again, because the panel is the state', function () {
@@ -112,8 +124,8 @@ test('a hand stays selected when clicked again, because the panel is the state',
     $hand = $card->categories->first()->hands->first();
 
     Livewire::test('pages::card.line-decoder')
-        ->call('selectHand', $hand->id)
-        ->assertSet('handId', $hand->id);
+        ->call('selectHand', $hand->slug)
+        ->assertSet('handSlug', $hand->slug);
 });
 
 test('the breakdown panel explains the selected hand in plain english', function () {
@@ -174,4 +186,12 @@ test('the suits reset together', function () {
 test('the decoder says what to do when no card is seeded', function () {
     Livewire::test('pages::card.line-decoder')
         ->assertSee('No card is loaded');
+});
+
+test('the markup clicks through by slug, so no row id reaches the page', function () {
+    $year = decoderCard()->categories->first();
+
+    Livewire::test('pages::card.line-decoder')
+        ->assertSeeHtml("selectCategory('{$year->slug}')")
+        ->assertSeeHtml("selectHand('{$year->hands->first()->slug}')");
 });

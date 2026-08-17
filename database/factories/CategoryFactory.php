@@ -21,6 +21,7 @@ class CategoryFactory extends Factory
         return [
             'card_id' => Card::factory(),
             'name' => ucfirst(fake()->unique()->word()).' Hands',
+            'slug' => fake()->unique()->slug(),
             'sort_order' => fake()->numberBetween(1, 20),
         ];
     }

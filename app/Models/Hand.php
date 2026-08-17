@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $card_id
  * @property int $category_id
+ * @property string $slug
  * @property int $sort_order
  * @property int $points
  * @property bool $concealed
@@ -29,7 +30,7 @@ use Illuminate\Support\Carbon;
  * @property-read Card $card
  * @property-read Category $category
  */
-#[Fillable(['card_id', 'category_id', 'sort_order', 'points', 'concealed', 'structure'])]
+#[Fillable(['card_id', 'category_id', 'slug', 'sort_order', 'points', 'concealed', 'structure'])]
 class Hand extends Model
 {
     /** @use HasFactory<HandFactory> */

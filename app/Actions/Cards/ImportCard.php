@@ -6,6 +6,7 @@ use App\Data\HandStructure;
 use App\Enums\Variant;
 use App\Exceptions\SeedMismatch;
 use App\Mahjong\LineRenderer;
+use App\Mahjong\Slug;
 use App\Models\Card;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +45,10 @@ class ImportCard
                 'published_at' => now(),
             ]);
 
+            $slugs = new Slug;
+
             foreach ($data['categories'] as $categoryOrder => $authoredCategory) {
-                $this->importCategory($card, $authoredCategory, $categoryOrder + 1);
+                $this->importCategory($card, $authoredCategory, $categoryOrder + 1, $slugs);
             }
 
             return $card->load(['categories', 'hands']);
@@ -57,15 +60,16 @@ class ImportCard
      *
      * @param  AuthoredCategory  $data
      */
-    private function importCategory(Card $card, array $data, int $sortOrder): void
+    private function importCategory(Card $card, array $data, int $sortOrder, Slug $slugs): void
     {
         $category = $card->categories()->create([
             'name' => $data['name'],
+            'slug' => $slugs->forCategory($data['name']),
             'sort_order' => $sortOrder,
         ]);
 
         foreach ($data['hands'] as $handOrder => $authoredHand) {
-            $this->importHand($card, $category, $authoredHand, $handOrder + 1);
+            $this->importHand($card, $category, $authoredHand, $handOrder + 1, $slugs);
         }
     }
 
@@ -74,7 +78,7 @@ class ImportCard
      *
      * @param  AuthoredHand  $data
      */
-    private function importHand(Card $card, Category $category, array $data, int $sortOrder): void
+    private function importHand(Card $card, Category $category, array $data, int $sortOrder, Slug $slugs): void
     {
         $structure = HandStructure::fromArray($data);
         $rendered = $this->renderer->render($structure);
@@ -84,11 +88,14 @@ class ImportCard
             SeedMismatch::forHand($category->name, $data['line'], $rendered),
         );
 
+        $concealed = $data['concealed'] ?? false;
+
         $card->hands()->create([
             'category_id' => $category->id,
+            'slug' => $slugs->forLine($rendered, $concealed),
             'sort_order' => $sortOrder,
             'points' => $data['points'],
-            'concealed' => $data['concealed'] ?? false,
+            'concealed' => $concealed,
             'structure' => $structure,
         ]);
     }

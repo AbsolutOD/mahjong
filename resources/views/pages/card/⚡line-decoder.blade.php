@@ -26,11 +26,19 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 
 new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Component {
-    #[Url]
-    public ?int $categoryId = null;
+    /**
+     * The selection is carried by slug rather than row id.
+     *
+     * Reseeding the card recreates every row, so a link built from an id would
+     * quietly point at a different hand after the next deploy.
+     *
+     * @see \App\Mahjong\Slug
+     */
+    #[Url(as: 'category')]
+    public ?string $categorySlug = null;
 
-    #[Url]
-    public ?int $handId = null;
+    #[Url(as: 'hand')]
+    public ?string $handSlug = null;
 
     /**
      * The suits the player has bound the hand's letters to, keyed by letter.
@@ -39,10 +47,13 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
      */
     public array $suits = [];
 
+    /**
+     * Settle the selection, so the url always names the line actually on show.
+     */
     public function mount(): void
     {
-        $this->categoryId ??= $this->categories->first()?->id;
-        $this->handId ??= $this->hands->first()?->id;
+        $this->categorySlug = $this->category?->slug;
+        $this->handSlug = $this->hand?->slug;
     }
 
     /**
@@ -71,7 +82,7 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
     #[Computed]
     public function category(): ?Category
     {
-        return $this->categories->firstWhere('id', $this->categoryId) ?? $this->categories->first();
+        return $this->categories->firstWhere('slug', $this->categorySlug) ?? $this->categories->first();
     }
 
     /**
@@ -91,7 +102,7 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
     #[Computed]
     public function hand(): ?Hand
     {
-        return $this->hands->firstWhere('id', $this->handId) ?? $this->hands->first();
+        return $this->hands->firstWhere('slug', $this->handSlug) ?? $this->hands->first();
     }
 
     /**
@@ -108,21 +119,21 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
     /**
      * Browse a different section of the card, landing on its first line.
      */
-    public function selectCategory(int $id): void
+    public function selectCategory(string $slug): void
     {
-        $this->categoryId = $id;
+        $this->categorySlug = $slug;
 
         unset($this->category, $this->hands, $this->hand, $this->reading);
 
-        $this->handId = $this->hands->first()?->id;
+        $this->handSlug = $this->hands->first()?->slug;
     }
 
     /**
      * Decode a line.
      */
-    public function selectHand(int $id): void
+    public function selectHand(string $slug): void
     {
-        $this->handId = $id;
+        $this->handSlug = $slug;
 
         unset($this->hand, $this->reading);
     }
@@ -195,8 +206,8 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
                     @foreach ($this->categories as $category)
                         <button
                             type="button"
-                            wire:key="category-{{ $category->id }}"
-                            wire:click="selectCategory({{ $category->id }})"
+                            wire:key="category-{{ $category->slug }}"
+                            wire:click="selectCategory('{{ $category->slug }}')"
                             @class([
                                 'flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm',
                                 'bg-zinc-100 font-medium dark:bg-zinc-800' => $this->category?->is($category),
@@ -216,8 +227,8 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
                     @foreach ($this->categories as $category)
                         <button
                             type="button"
-                            wire:key="chip-{{ $category->id }}"
-                            wire:click="selectCategory({{ $category->id }})"
+                            wire:key="chip-{{ $category->slug }}"
+                            wire:click="selectCategory('{{ $category->slug }}')"
                             @class([
                                 'shrink-0 rounded-full border px-3 py-1 text-xs font-medium',
                                 'border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900' => $this->category?->is($category),
@@ -236,8 +247,8 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
                     @foreach ($this->hands as $hand)
                         <button
                             type="button"
-                            wire:key="hand-{{ $hand->id }}"
-                            wire:click="selectHand({{ $hand->id }})"
+                            wire:key="hand-{{ $hand->slug }}"
+                            wire:click="selectHand('{{ $hand->slug }}')"
                             @class([
                                 'flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left',
                                 'border-sky-500 bg-sky-50 dark:bg-sky-950/40' => $this->hand?->is($hand),

@@ -26,21 +26,26 @@ return new class extends Migration
             $table->id();
             $table->foreignId('card_id')->constrained()->cascadeOnDelete();
             $table->string('name');
+            $table->string('slug');
             $table->unsignedSmallInteger('sort_order');
             $table->timestamps();
 
             $table->unique(['card_id', 'name']);
+            $table->unique(['card_id', 'slug']);
         });
 
         Schema::create('hands', function (Blueprint $table) {
             $table->id();
             $table->foreignId('card_id')->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+            $table->string('slug');
             $table->unsignedSmallInteger('sort_order');
             $table->unsignedSmallInteger('points');
             $table->boolean('concealed')->default(false);
             $table->json('structure');
             $table->timestamps();
+
+            $table->unique(['card_id', 'slug']);
         });
     }
 

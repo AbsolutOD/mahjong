@@ -20,13 +20,14 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $card_id
  * @property string $name
+ * @property string $slug
  * @property int $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Card $card
  * @property-read Collection<int, Hand> $hands
  */
-#[Fillable(['card_id', 'name', 'sort_order'])]
+#[Fillable(['card_id', 'name', 'slug', 'sort_order'])]
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Actions\Cards\ImportCard;
 use App\Models\Category;
 use App\Models\Hand;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -17,6 +18,9 @@ class HandFactory extends Factory
      * The default hand is "FF 2222(A) 4444(A) DDDD(B)" — two suits, a pair of
      * flowers, and three joker-eligible kongs.
      *
+     * The slug is fabricated rather than derived from the line: deriving it is
+     * {@see ImportCard}'s job, and tested there.
+     *
      * @return array<string, mixed>
      */
     public function definition(): array
@@ -27,6 +31,7 @@ class HandFactory extends Factory
                 ->whereKey($attributes['category_id'])
                 ->firstOrFail()
                 ->card_id,
+            'slug' => fake()->unique()->slug(),
             'sort_order' => fake()->numberBetween(1, 20),
             'points' => fake()->randomElement([25, 30, 35, 40, 45, 50]),
             'concealed' => false,

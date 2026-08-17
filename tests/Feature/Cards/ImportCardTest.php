@@ -136,3 +136,52 @@ test('a hand that does not describe a legal structure aborts the import', functi
 
     app(ImportCard::class)->handle($data);
 })->throws(InvalidArgumentException::class, 'A hand must hold exactly 14 tiles, found 10.');
+
+test('a category is addressed by a slug of the name the card prints', function () {
+    $card = app(ImportCard::class)->handle(authoredCard());
+
+    expect($card->categories->pluck('slug')->all())->toBe(['evens', 'winds-and-dragons']);
+});
+
+test('a hand is addressed by a slug of the line it prints', function () {
+    $card = app(ImportCard::class)->handle(authoredCard());
+
+    expect($card->hands()->where('points', 25)->sole()->slug)->toBe('ff-2222a-4444a-ddddb');
+});
+
+test('a concealed line is slugged apart from its exposed twin, whichever is printed first', function () {
+    $data = authoredCard();
+    $exposed = $data['categories'][0]['hands'][0];
+
+    /** The concealed twin is printed first, to prove print order does not decide the slug. */
+    $data['categories'][0]['hands'] = [
+        [...$exposed, 'concealed' => true, 'points' => 50],
+        $exposed,
+    ];
+
+    $card = app(ImportCard::class)->handle($data);
+
+    expect($card->hands()->where('concealed', true)->sole()->slug)->toBe('ff-2222a-4444a-ddddb-c')
+        ->and($card->hands()->where('points', 25)->sole()->slug)->toBe('ff-2222a-4444a-ddddb');
+});
+
+test('lines that print the same are told apart in the order the card prints them', function () {
+    $data = authoredCard();
+    $data['categories'][0]['hands'] = [
+        $data['categories'][0]['hands'][0],
+        $data['categories'][0]['hands'][0],
+    ];
+
+    $card = app(ImportCard::class)->handle($data);
+
+    expect($card->categories->first()->hands->pluck('slug')->all())
+        ->toBe(['ff-2222a-4444a-ddddb', 'ff-2222a-4444a-ddddb-2']);
+});
+
+test('slugs survive a reseed even though row ids do not', function () {
+    $before = app(ImportCard::class)->handle(authoredCard())->hands()->orderBy('id')->pluck('slug', 'id');
+    $after = app(ImportCard::class)->handle(authoredCard())->hands()->orderBy('id')->pluck('slug', 'id');
+
+    expect($after->values()->all())->toBe($before->values()->all())
+        ->and($after->keys()->all())->not->toBe($before->keys()->all());
+});
