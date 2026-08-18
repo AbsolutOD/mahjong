@@ -18,8 +18,6 @@
                     <x-app-logo-icon class="size-6" />
                     <span class="font-semibold">{{ config('app.name') }}</span>
                 </a>
-
-                <flux:button href="{{ route('login') }}" size="sm" variant="ghost">{{ __('Log in') }}</flux:button>
             </div>
         </header>
 
