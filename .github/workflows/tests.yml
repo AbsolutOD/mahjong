@@ -36,23 +36,3 @@ jobs:
 
       - name: Run CI Checks
         run: composer ci:check
-
-  # Laravel Cloud's own auto-deploy is off: it ships whatever lands on main,
-  # including a commit that fails Pint, PHPStan or Pest. The deploy hook is
-  # fired from here instead, so green tests are what a release is made of.
-  deploy:
-    needs: ci
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: production
-
-    steps:
-      - name: Deploy to Laravel Cloud
-        env:
-          DEPLOY_HOOK: ${{ secrets.LARAVEL_CLOUD_DEPLOY_HOOK }}
-        run: |
-          if [ -z "$DEPLOY_HOOK" ]; then
-            echo "::error::LARAVEL_CLOUD_DEPLOY_HOOK is not set on the production environment."
-            exit 1
-          fi
-          curl --fail-with-body --silent --show-error --location --request POST "$DEPLOY_HOOK"
