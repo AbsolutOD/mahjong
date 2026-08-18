@@ -30,3 +30,14 @@ test('assigning the suits binds the card slots to real tiles', function () {
         ->assertSee('7 Dots')
         ->assertDontSee('X in suit A');
 });
+
+/**
+ * The reference is a workbench for drawing tiles, not a page for players — and
+ * `optimize` caches routes, so it has to stay in the route table to be cached.
+ * Production hides it at the door instead.
+ */
+test('the reference is not served on the site the public reaches', function () {
+    app()->detectEnvironment(fn (): string => 'production');
+
+    $this->get(route('tiles'))->assertNotFound();
+});

@@ -11,6 +11,7 @@
  * {@see HandReading}, which comes from the hand's structure.
  */
 
+use App\Actions\Cards\LoadCurrentCard;
 use App\Data\Decoding\HandReading;
 use App\Data\Tiles\SuitAssignment;
 use App\Enums\Suit;
@@ -57,12 +58,12 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
     }
 
     /**
-     * Get the card being decoded — the newest one published.
+     * Get the card being decoded — the newest one, read from the cache.
      */
     #[Computed]
     public function card(): ?Card
     {
-        return Card::query()->latest('year')->first();
+        return app(LoadCurrentCard::class)->handle();
     }
 
     /**
@@ -73,7 +74,7 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
     #[Computed]
     public function categories(): Collection
     {
-        return $this->card?->categories()->withCount('hands')->get() ?? collect();
+        return $this->card?->categories ?? collect();
     }
 
     /**
@@ -215,7 +216,7 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
                             ])
                         >
                             <span>{{ $category->name }}</span>
-                            <span class="text-xs opacity-60">{{ $category->hands_count }}</span>
+                            <span class="text-xs opacity-60">{{ $category->hands->count() }}</span>
                         </button>
                     @endforeach
                 </div>
