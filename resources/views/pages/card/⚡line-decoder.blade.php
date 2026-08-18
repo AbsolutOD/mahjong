@@ -195,7 +195,7 @@ new #[Layout('layouts::public')] #[Title('Line Decoder')] class extends Componen
 <div>
     @if ($this->card === null)
         <flux:callout variant="warning" icon="exclamation-triangle" heading="{{ __('No card is loaded') }}">
-            {{ __('Run php artisan db:seed to load the practice card.') }}
+            {{ __('Run php artisan db:seed --class=CardSeeder to load the practice card.') }}
         </flux:callout>
     @else
         <div class="flex gap-6 xl:gap-8">
