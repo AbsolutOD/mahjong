@@ -5,6 +5,7 @@ use App\Data\HandStructure;
 use App\Models\Card;
 use App\Models\Category;
 use App\Models\Hand;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -92,4 +93,23 @@ test('clearing the cache is what publishes a reseeded card', function () {
     $this->artisan('cache:clear')->assertSuccessful();
 
     expect(app(LoadCurrentCard::class)->handle()?->name)->toBe('Card of 2027');
+});
+
+/**
+ * Nothing clears this cache but a release, so remembering an empty database
+ * would leave the site blank until the next deploy — or for good, if that
+ * deploy is the thing that is failing to seed.
+ */
+test('an unseeded database is not remembered, so the card shows the moment it is seeded', function () {
+    expect(app(LoadCurrentCard::class)->handle())->toBeNull();
+
+    cardOfYear(2026);
+
+    expect(app(LoadCurrentCard::class)->handle()?->name)->toBe('Card of 2026');
+});
+
+test('an empty read leaves nothing behind in the cache to go stale', function () {
+    app(LoadCurrentCard::class)->handle();
+
+    expect(Cache::has(LoadCurrentCard::CACHE_KEY))->toBeFalse();
 });

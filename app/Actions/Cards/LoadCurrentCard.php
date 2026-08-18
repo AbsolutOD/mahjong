@@ -39,7 +39,15 @@ class LoadCurrentCard
     {
         $rows = Cache::rememberForever(self::CACHE_KEY, $this->read(...));
 
+        /**
+         * An empty database must not be remembered. Nothing clears this cache
+         * but a release, so a single request arriving before the card is
+         * seeded would otherwise leave the site blank until the next deploy —
+         * and blank is what it would stay if that deploy never seeds either.
+         */
         if ($rows['card'] === null) {
+            Cache::forget(self::CACHE_KEY);
+
             return null;
         }
 
