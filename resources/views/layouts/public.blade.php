@@ -18,6 +18,25 @@
                     <x-app-logo-icon class="size-6" />
                     <span class="font-semibold">{{ config('app.name') }}</span>
                 </a>
+
+                {{--
+                    Live destinations only, so this grows a link the day a phase
+                    ships; the ones still to come are announced on the landing page.
+
+                    `aria-current` is set by hand because Flux marks the current item
+                    with `data-current`, which styles the link but tells a screen
+                    reader nothing.
+                --}}
+                <flux:navbar>
+                    <flux:navbar.item
+                        href="{{ route('card') }}"
+                        :current="request()->routeIs('card')"
+                        :aria-current="request()->routeIs('card') ? 'page' : false"
+                        wire:navigate
+                    >
+                        {{ __('Line Decoder') }}
+                    </flux:navbar.item>
+                </flux:navbar>
             </div>
         </header>
 
