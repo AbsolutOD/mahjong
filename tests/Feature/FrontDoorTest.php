@@ -10,10 +10,18 @@ use App\Models\Card;
  * Anonymous v1 has no dashboard behind a login, so `/` is the whole front door:
  * it is the only place the product gets to say what it is.
  */
-test('the front door is a page that names the product', function () {
+/**
+ * A sentinel name rather than `config('app.name')`, which would compare the page
+ * against the very value it renders and pass whatever that value was. This bites
+ * only if nothing in the document — title, chrome or copy — reads the name from
+ * config; the hero alone is not covered.
+ */
+test('the front door is a page, and takes the product name from config', function () {
+    config()->set('app.name', 'Front Door Fixture');
+
     $this->get(route('home'))
         ->assertOk()
-        ->assertSee(config('app.name'));
+        ->assertSee('Front Door Fixture');
 });
 
 test('the front door leads into the decoder', function () {
@@ -27,11 +35,14 @@ test('the front door leads into the decoder', function () {
  * else to be announced — anonymous v1 has no dashboard to announce them from.
  */
 test('the front door names the phases still to come, and says they are not built', function () {
-    $this->get(route('home'))
+    $response = $this->get(route('home'))
         ->assertOk()
         ->assertSee('Hand Matcher')
         ->assertSee('Practice & Quiz')
         ->assertSee('Not built yet');
+
+    /** Announced, but with nowhere to go: only the built phase offers a way in. */
+    expect(substr_count($response->getContent(), 'Open it'))->toBe(1);
 });
 
 /**

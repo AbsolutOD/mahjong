@@ -20,10 +20,8 @@
                 </a>
 
                 {{--
-                    Live destinations only. Two permanently unclickable items would
-                    read as broken to a first-time visitor, so the phases still to
-                    come are announced on the landing page instead and this grows a
-                    link the day one ships.
+                    Live destinations only, so this grows a link the day a phase
+                    ships; the ones still to come are announced on the landing page.
 
                     `aria-current` is set by hand because Flux marks the current item
                     with `data-current`, which styles the link but tells a screen
@@ -36,7 +34,7 @@
                         :aria-current="request()->routeIs('card') ? 'page' : false"
                         wire:navigate
                     >
-                        Line Decoder
+                        {{ __('Line Decoder') }}
                     </flux:navbar.item>
                 </flux:navbar>
             </div>
