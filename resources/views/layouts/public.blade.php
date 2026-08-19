@@ -18,6 +18,27 @@
                     <x-app-logo-icon class="size-6" />
                     <span class="font-semibold">{{ config('app.name') }}</span>
                 </a>
+
+                {{--
+                    Live destinations only. Two permanently unclickable items would
+                    read as broken to a first-time visitor, so the phases still to
+                    come are announced on the landing page instead and this grows a
+                    link the day one ships.
+
+                    `aria-current` is set by hand because Flux marks the current item
+                    with `data-current`, which styles the link but tells a screen
+                    reader nothing.
+                --}}
+                <flux:navbar>
+                    <flux:navbar.item
+                        href="{{ route('card') }}"
+                        :current="request()->routeIs('card')"
+                        :aria-current="request()->routeIs('card') ? 'page' : false"
+                        wire:navigate
+                    >
+                        Line Decoder
+                    </flux:navbar.item>
+                </flux:navbar>
             </div>
         </header>
 
