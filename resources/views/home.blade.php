@@ -40,8 +40,8 @@
         ],
         [
             'name' => __('Hand Matcher'),
-            'blurb' => __('Lay out your rack and see which lines you are closest to, how many tiles away each one is, and what to pass in the Charleston.'),
-            'route' => null,
+            'blurb' => __('Lay out your rack and see which lines you are closest to, how many tiles away each one is, and which tiles you are still short of.'),
+            'route' => route('matcher'),
         ],
         [
             'name' => __('Practice & Quiz'),

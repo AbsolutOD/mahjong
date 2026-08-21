@@ -24,15 +24,17 @@ test('the front door is a page, and takes the product name from config', functio
         ->assertSee('Front Door Fixture');
 });
 
-test('the front door leads into the decoder', function () {
+test('the front door leads into the phases that are built', function () {
     $this->get(route('home'))
         ->assertOk()
-        ->assertSee(route('card'));
+        ->assertSee(route('card'))
+        ->assertSee(route('matcher'));
 });
 
 /**
- * The decoder is one of three planned phases, and the other two have nowhere
- * else to be announced — anonymous v1 has no dashboard to announce them from.
+ * The phases still to come have nowhere else to be announced — anonymous v1 has
+ * no dashboard to announce them from — and a phase that ships turns from an
+ * announcement into a way in.
  */
 test('the front door names the phases still to come, and says they are not built', function () {
     $response = $this->get(route('home'))
@@ -41,8 +43,9 @@ test('the front door names the phases still to come, and says they are not built
         ->assertSee('Practice & Quiz')
         ->assertSee('Not built yet');
 
-    /** Announced, but with nowhere to go: only the built phase offers a way in. */
-    expect(substr_count($response->getContent(), 'Open it'))->toBe(1);
+    /** Announced, but with nowhere to go: only a built phase offers a way in. */
+    expect(substr_count($response->getContent(), 'Open it'))->toBe(2)
+        ->and(substr_count($response->getContent(), 'Not built yet'))->toBe(1);
 });
 
 /**
@@ -69,7 +72,7 @@ test('the header carries only the phases that exist', function () {
     $this->get(route('card'))
         ->assertOk()
         ->assertSee('Line Decoder')
-        ->assertDontSee('Hand Matcher')
+        ->assertSee('Hand Matcher')
         ->assertDontSee('Practice & Quiz');
 });
 
@@ -88,4 +91,4 @@ test('the public shell offers no way in, because there is nothing to sign in to'
         ->assertOk()
         ->assertDontSee(route('login'))
         ->assertDontSee(route('password.request'));
-})->with(['home', 'card']);
+})->with(['home', 'card', 'matcher']);
