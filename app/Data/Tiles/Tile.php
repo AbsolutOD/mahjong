@@ -113,6 +113,23 @@ readonly class Tile
     }
 
     /**
+     * Build the tile the given inventory code names, or null if none does.
+     *
+     * This is the inverse of {@see self::code()}, and it is deliberately
+     * forgiving: codes arrive from urls, where anything at all may be typed.
+     */
+    public static function tryFromCode(string $code): ?self
+    {
+        foreach (self::all() as $tile) {
+            if ($tile->code() === $code) {
+                return $tile;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Get the code that identifies this face in the tile inventory.
      *
      * @see AmericanMahjong::tileInventory()

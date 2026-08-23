@@ -36,6 +36,15 @@
                     >
                         {{ __('Line Decoder') }}
                     </flux:navbar.item>
+
+                    <flux:navbar.item
+                        href="{{ route('matcher') }}"
+                        :current="request()->routeIs('matcher')"
+                        :aria-current="request()->routeIs('matcher') ? 'page' : false"
+                        wire:navigate
+                    >
+                        {{ __('Hand Matcher') }}
+                    </flux:navbar.item>
                 </flux:navbar>
             </div>
         </header>

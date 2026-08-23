@@ -17,6 +17,9 @@ Route::view('/', 'home')->name('home');
 /** Learning the card needs no account, so the decoder sits in front of the wall. */
 Route::livewire('card', 'pages::card.line-decoder')->name('card');
 
+/** Nor does matching a rack against the card, which is the same lesson with tiles in hand. */
+Route::livewire('matcher', 'pages::matcher.hand-matcher')->name('matcher');
+
 Route::get('tiles', TileReferenceController::class)->name('tiles');
 
 Route::prefix('{current_team}')
