@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Cards\LoadCurrentCard;
 use App\Mahjong\LineRenderer;
 use App\Models\Card;
 use App\Models\Hand;
@@ -47,4 +48,20 @@ test('seeding twice leaves one copy of each card', function () {
 
     expect(Card::count())->toBe(1)
         ->and(Hand::count())->toBe($handCount);
+});
+
+/**
+ * The card is cached forever, so something has to drop it when the card
+ * changes. Leaving that to the release command's separate `cache:clear` lets
+ * the two drift: a seed run any other way — by hand in a console, which is how
+ * production was first seeded — would publish nothing.
+ */
+test('seeding publishes the card it imports, without waiting for a separate cache clear', function () {
+    Card::factory()->create(['name' => 'Last season', 'year' => 2025]);
+
+    expect(app(LoadCurrentCard::class)->handle()?->name)->toBe('Last season');
+
+    $this->seed(CardSeeder::class);
+
+    expect(app(LoadCurrentCard::class)->handle()?->name)->toBe('TileTutor Practice Card');
 });
