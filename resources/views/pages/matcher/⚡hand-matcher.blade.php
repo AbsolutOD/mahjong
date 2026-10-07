@@ -10,13 +10,20 @@
  *
  * The component holds no copy about a hand: the breakdown reads through
  * {@see HandReading}, the same layer the Line Decoder renders.
+ *
+ * The Charleston assistant (issue #17) rides on the same ranking: every racked
+ * tile says how many leading hands want it, and at thirteen or fourteen tiles
+ * the page names what to pass or discard, each with a reason from
+ * {@see CharlestonAdvice}.
  */
 
 use App\Actions\Cards\LoadCurrentCard;
+use App\Data\Charleston\CharlestonAdvice;
 use App\Data\Decoding\HandReading;
 use App\Data\Matching\HandMatch;
 use App\Data\Matching\Rack;
 use App\Data\Tiles\Tile;
+use App\Mahjong\CharlestonAdvisor;
 use App\Mahjong\HandMatcher;
 use App\Mahjong\LineRenderer;
 use App\Models\Card;
@@ -46,6 +53,13 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
      */
     #[Url(as: 'hand')]
     public ?string $handSlug = null;
+
+    /**
+     * The lines the learner is chasing, as slugs — the Charleston advice is
+     * judged against these instead of the top of the ranking once any are set.
+     */
+    #[Url(as: 'pins')]
+    public string $pinnedSlugs = '';
 
     /**
      * Settle the rack, so the url always names the tiles actually on show.
@@ -84,6 +98,15 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
         return $this->card === null
             ? []
             : app(HandMatcher::class)->rank($this->card, $this->rack);
+    }
+
+    /**
+     * Get what the rack can afford to let go of, judged against the leading hands.
+     */
+    #[Computed]
+    public function advice(): CharlestonAdvice
+    {
+        return app(CharlestonAdvisor::class)->advise($this->matches, $this->rack, $this->pins());
     }
 
     /**
@@ -159,6 +182,28 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
     }
 
     /**
+     * Pin a line the learner is chasing, or unpin it.
+     */
+    public function togglePin(string $slug): void
+    {
+        $pins = in_array($slug, $this->pins(), true)
+            ? array_diff($this->pins(), [$slug])
+            : [...$this->pins(), $slug];
+
+        $this->pinnedSlugs = implode(',', $pins);
+
+        unset($this->advice);
+    }
+
+    /**
+     * Determine whether the learner has pinned the given line.
+     */
+    public function isPinned(string $slug): bool
+    {
+        return in_array($slug, $this->pins(), true);
+    }
+
+    /**
      * Render a line as the shorthand the card prints.
      */
     public function line(Hand $hand): string
@@ -173,7 +218,17 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
     {
         $this->rackCodes = implode(',', $rack->codes());
 
-        unset($this->rack, $this->matches, $this->match, $this->reading);
+        unset($this->rack, $this->matches, $this->match, $this->reading, $this->advice);
+    }
+
+    /**
+     * Get the pinned slugs out of the url.
+     *
+     * @return list<string>
+     */
+    private function pins(): array
+    {
+        return array_values(array_filter(explode(',', $this->pinnedSlugs)));
     }
 }; ?>
 
@@ -231,14 +286,26 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
 
             <div class="mt-3 flex flex-wrap gap-1.5 rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900/50">
                 @foreach ($this->rack->tiles as $position => $tile)
+                    {{-- The advice comes in rack order, one per copy, so it lines up by position. --}}
+                    @php($tileAdvice = $this->advice->tiles[$position])
+
                     <button
                         type="button"
                         wire:key="racked-{{ $position }}-{{ $tile->code() }}"
                         wire:click="removeTile('{{ $tile->code() }}')"
-                        class="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+                        class="flex flex-col items-center gap-0.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
                     >
                         <x-tile :face="TileFace::of($tile)" />
-                        <span class="sr-only">{{ __('Take :tile off the rack', ['tile' => TileFace::of($tile)->name]) }}</span>
+                        <span @class([
+                            'text-[10px] font-semibold uppercase tracking-wide whitespace-nowrap',
+                            'text-amber-600 dark:text-amber-400' => ! $tileAdvice->isPassable(),
+                            'text-emerald-600 dark:text-emerald-400' => $tileAdvice->isPassable() && $tileAdvice->wantedBy !== [],
+                            'text-zinc-500' => $tileAdvice->isPassable() && $tileAdvice->wantedBy === [],
+                        ]) aria-hidden="true">{{ __($tileAdvice->marker()) }}</span>
+                        <span class="sr-only">
+                            {{ __('Take :tile off the rack', ['tile' => TileFace::of($tile)->name]) }}.
+                            {{ __($tileAdvice->spokenMarker()) }}.
+                        </span>
                     </button>
                 @endforeach
 
@@ -292,6 +359,10 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
 
         <div class="flex gap-6 xl:gap-8">
             <div class="min-w-0 flex-1">
+                @if ($this->advice->call() !== null)
+                    @include('pages.matcher.charleston')
+                @endif
+
                 <flux:heading size="lg">{{ __('Closest lines') }}</flux:heading>
                 <flux:subheading>
                     {{ $this->rack->isEmpty()
@@ -299,42 +370,77 @@ new #[Layout('layouts::public')] #[Title('Hand Matcher')] class extends Componen
                         : __('Ranked by how many tiles away each line is — not by how easy it would be to finish.') }}
                 </flux:subheading>
 
+                {{-- Which hands the rack markers and the Charleston advice are judged against. --}}
+                <flux:text size="sm" class="mt-2">
+                    {{ $this->advice->pinned
+                        ? __('Advice follows the lines you pinned. Unpin them all to go back to your closest three.')
+                        : __('Advice follows your closest three lines. Pin the lines you are chasing to steer it.') }}
+                </flux:text>
+
                 <div class="mt-4 space-y-1">
                     @foreach ($this->matches as $match)
-                        <button
-                            type="button"
+                        @php($leading = $this->advice->isLeading($match))
+                        @php($pinned = $this->isPinned($match->hand->slug))
+
+                        <div
                             wire:key="match-{{ $match->hand->slug }}"
-                            wire:click="selectHand('{{ $match->hand->slug }}')"
                             @class([
-                                'flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left',
+                                'flex items-center gap-1 rounded-lg border',
                                 'border-sky-500 bg-sky-50 dark:bg-sky-950/40' => $this->match?->hand->slug === $match->hand->slug,
                                 'border-transparent hover:border-zinc-200 hover:bg-zinc-50 dark:hover:border-zinc-700 dark:hover:bg-zinc-800/40' => $this->match?->hand->slug !== $match->hand->slug,
                             ])
                         >
-                            <flux:badge size="sm" :color="$match->isComplete() ? 'lime' : 'zinc'" class="shrink-0 tabular-nums">
-                                {{ $match->isComplete()
-                                    ? __('complete')
-                                    : trans_choice('{1} :count away|[2,*] :count away', $match->tilesAway(), ['count' => $match->tilesAway()]) }}
-                            </flux:badge>
+                            <button
+                                type="button"
+                                wire:click="selectHand('{{ $match->hand->slug }}')"
+                                class="flex min-w-0 grow items-center gap-3 px-3 py-2 text-left"
+                            >
+                                <flux:badge size="sm" :color="$match->isComplete() ? 'lime' : 'zinc'" class="shrink-0 tabular-nums">
+                                    {{ $match->isComplete()
+                                        ? __('complete')
+                                        : trans_choice('{1} :count away|[2,*] :count away', $match->tilesAway(), ['count' => $match->tilesAway()]) }}
+                                </flux:badge>
 
-                            <span class="min-w-0 grow">
-                                <span class="block truncate font-mono text-sm tracking-tight">{{ $this->line($match->hand) }}</span>
+                                <span class="min-w-0 grow">
+                                    <span class="block truncate font-mono text-sm tracking-tight">{{ $this->line($match->hand) }}</span>
 
-                                @if ($match->instantiation->bindings !== [])
-                                    <span class="block truncate font-mono text-xs text-zinc-500">
-                                        @foreach ($match->instantiation->bindings as $variable => $value)
-                                            {{ $variable }}={{ $value }}{{ ! $loop->last ? ' ' : '' }}
-                                        @endforeach
+                                    <span class="block truncate text-xs text-zinc-500">
+                                        {{ $match->name }}@if ($match->instantiation->bindings !== [])
+                                            ·
+                                            <span class="font-mono">
+                                                @foreach ($match->instantiation->bindings as $variable => $value)
+                                                    {{ $variable }}={{ $value }}{{ ! $loop->last ? ' ' : '' }}
+                                                @endforeach
+                                            </span>
+                                        @endif
                                     </span>
+                                </span>
+
+                                @if ($leading)
+                                    <flux:badge size="sm" color="sky" class="shrink-0">{{ __('leading') }}</flux:badge>
                                 @endif
-                            </span>
 
-                            <span class="shrink-0 font-mono text-xs text-zinc-500">{{ $match->hand->points }}</span>
+                                <span class="shrink-0 font-mono text-xs text-zinc-500">{{ $match->hand->points }}</span>
 
-                            <flux:badge size="sm" :color="$match->hand->concealed ? 'purple' : 'zinc'">
-                                {{ $match->hand->concealed ? 'C' : 'X' }}
-                            </flux:badge>
-                        </button>
+                                <flux:badge size="sm" :color="$match->hand->concealed ? 'purple' : 'zinc'">
+                                    {{ $match->hand->concealed ? 'C' : 'X' }}
+                                </flux:badge>
+                            </button>
+
+                            <button
+                                type="button"
+                                wire:click="togglePin('{{ $match->hand->slug }}')"
+                                aria-pressed="{{ $pinned ? 'true' : 'false' }}"
+                                @class([
+                                    'mr-2 shrink-0 rounded p-1 focus-visible:outline-2 focus-visible:outline-sky-500',
+                                    'text-sky-600 dark:text-sky-400' => $pinned,
+                                    'text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200' => ! $pinned,
+                                ])
+                            >
+                                <flux:icon.bookmark :variant="$pinned ? 'solid' : 'outline'" class="size-4" />
+                                <span class="sr-only">{{ __('Pin :name as a line you are chasing', ['name' => $match->name]) }}</span>
+                            </button>
+                        </div>
                     @endforeach
                 </div>
             </div>

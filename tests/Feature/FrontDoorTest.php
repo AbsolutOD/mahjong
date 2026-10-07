@@ -49,6 +49,17 @@ test('the front door names the phases still to come, and says they are not built
 });
 
 /**
+ * Phase 2 shipped in two halves. The blurb lost its Charleston clause while only
+ * the matcher existed, and regains it now the assistant is built (issue #17), so
+ * no half of a built phase is promised before it exists — or left unannounced.
+ */
+test('the front door promises the whole of the hand matcher, Charleston included', function () {
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('which to pass in the Charleston');
+});
+
+/**
  * The guard #32 was written around. Caching *"there is no card"* left the site
  * blank once already (#30), and a front door that goes dark when the card is
  * missing is that defect in a new costume — so the tiles here are fixed ones,

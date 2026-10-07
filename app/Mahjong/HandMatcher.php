@@ -39,8 +39,8 @@ class HandMatcher
         $order = 0;
 
         foreach ($card->categories as $category) {
-            foreach ($category->hands as $hand) {
-                $match = $this->match($hand, $rack, $order++);
+            foreach (array_values($category->hands->all()) as $position => $hand) {
+                $match = $this->match($hand, $rack, $order++, $category->name.' '.($position + 1));
 
                 if ($match !== null) {
                     $matches[] = $match;
@@ -64,10 +64,13 @@ class HandMatcher
      * the letters in card order — A to dots, B to bams, C to craks — rather
      * than asserting a binding the rack gave no reason for.
      *
+     * The name is how the card addresses the line, "Quints 3"; only a ranking
+     * knows a line's place on its card, so a lone measurement goes unnamed.
+     *
      * Returns null for a line the game cannot supply under any assignment; the
      * practice card holds none, but nothing in the schema forbids one.
      */
-    public function match(Hand $hand, Rack $rack, int $cardOrder = 0): ?HandMatch
+    public function match(Hand $hand, Rack $rack, int $cardOrder = 0, string $name = 'This line'): ?HandMatch
     {
         $best = null;
 
@@ -75,7 +78,7 @@ class HandMatcher
             $coverage = Coverage::of($instantiation, $rack);
 
             if ($best === null || $coverage->covered > $best->coverage->covered) {
-                $best = new HandMatch($hand, $instantiation, $coverage, $cardOrder);
+                $best = new HandMatch($hand, $instantiation, $coverage, $cardOrder, $name);
             }
         }
 

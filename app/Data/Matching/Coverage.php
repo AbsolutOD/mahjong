@@ -121,6 +121,31 @@ readonly class Coverage
     }
 
     /**
+     * Get how many copies of each tile the hand places, keyed by tile code.
+     *
+     * A count rather than a yes or no, because a rack's copies are not equal:
+     * holding two 7 Bams where the hand places one leaves the second spare,
+     * which is the lesson the Charleston advice is built on (issue #17). Slots a
+     * joker covers are not counted — they place no tile of their own.
+     *
+     * @return array<string, int>
+     */
+    public function placed(): array
+    {
+        $placed = [];
+
+        foreach ($this->groups as $slots) {
+            foreach ($slots as $slot) {
+                if ($slot->state === SlotState::Held) {
+                    $placed[$slot->tile->code()] = ($placed[$slot->tile->code()] ?? 0) + 1;
+                }
+            }
+        }
+
+        return $placed;
+    }
+
+    /**
      * Get the tiles the rack is still short of, in card order.
      *
      * @return list<Tile>
