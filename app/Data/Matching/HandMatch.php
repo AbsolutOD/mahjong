@@ -15,11 +15,15 @@ use App\Models\Hand;
  */
 readonly class HandMatch
 {
+    /**
+     * @param  string  $name  how the card addresses the line — its section and place in it, "Quints 3"
+     */
     public function __construct(
         public Hand $hand,
         public Instantiation $instantiation,
         public Coverage $coverage,
         public int $cardOrder,
+        public string $name = 'This line',
     ) {
         //
     }

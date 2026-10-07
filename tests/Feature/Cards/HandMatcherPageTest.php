@@ -242,3 +242,100 @@ test('a tile the set does not have is not on the palette', function () {
         ->assertSeeHtml("addTile('joker')")
         ->assertDontSeeHtml("addTile('zero')");
 });
+
+/**
+ * A thirteen-tile rack on the fixture card: the flowers and fives all go to the
+ * near line, so the craks are what nothing wants and what the page says to pass.
+ *
+ * @return list<string>
+ */
+function charlestonRack(): array
+{
+    return [...array_fill(0, 4, 'flower'), ...array_fill(0, 4, 'dots-5'), 'bams-2', 'craks-1', 'craks-4', 'craks-8', 'joker'];
+}
+
+test('every racked tile says how many leading hands want it, and a joker that it is never passed', function () {
+    matcherCard();
+
+    $component = Livewire::test('pages::matcher.hand-matcher');
+
+    foreach (['flower', 'craks-1', 'joker'] as $code) {
+        $component->call('addTile', $code);
+    }
+
+    $component
+        ->assertSee('never passed')
+        ->assertSee('Jokers are never passed')
+        ->assertSee('Wanted by 1 of your leading hands')
+        ->assertSee('None of your leading hands wants this tile')
+        ->assertDontSee('Pass these 3');
+});
+
+test('a thirteen-tile rack is told which three to pass, and why', function () {
+    matcherCard();
+
+    $component = Livewire::withUrlParams(['rack' => implode(',', charlestonRack())])
+        ->test('pages::matcher.hand-matcher');
+
+    $recommended = array_map(
+        fn ($tile): string => $tile->tile->code(),
+        $component->instance()->advice->recommended(),
+    );
+
+    expect($recommended)->toBe(['craks-1', 'craks-4', 'craks-8']);
+
+    $component
+        ->assertSee('Pass these 3')
+        ->assertSee('None of your leading hands uses it, and no line on the card would.')
+        ->assertSee('This reads the card, not the table')
+        ->assertSee('Courtesy pass')
+        ->assertSee('Blind pass');
+});
+
+test('a fourteen-tile rack is told which one to discard', function () {
+    matcherCard();
+
+    Livewire::withUrlParams(['rack' => implode(',', [...charlestonRack(), 'craks-9'])])
+        ->test('pages::matcher.hand-matcher')
+        ->assertSee('Discard this 1')
+        ->assertDontSee('Pass these 3')
+        ->assertDontSee('Courtesy pass');
+});
+
+test('pinning a line makes it the one the advice follows, and the pin lives in the url', function () {
+    matcherCard();
+
+    $component = Livewire::test('pages::matcher.hand-matcher')
+        ->call('addTile', 'flower')
+        ->assertSee('Advice follows your closest three lines')
+        ->call('togglePin', 'seven-sevens')
+        ->assertSet('pinnedSlugs', 'seven-sevens')
+        ->assertSee('Advice follows the lines you pinned')
+        ->assertSee('None of your leading hands wants this tile');
+
+    expect(array_map(fn ($match): string => $match->hand->slug, $component->instance()->advice->leading))
+        ->toBe(['seven-sevens']);
+
+    $component
+        ->call('togglePin', 'seven-sevens')
+        ->assertSet('pinnedSlugs', '')
+        ->assertSee('Wanted by 1 of your leading hands');
+});
+
+test('pins read from the url steer the advice from the first render', function () {
+    matcherCard();
+
+    Livewire::withUrlParams(['rack' => 'flower', 'pins' => 'seven-sevens'])
+        ->test('pages::matcher.hand-matcher')
+        ->assertSee('None of your leading hands wants this tile')
+        ->assertSeeHtml('aria-pressed="true"');
+});
+
+test('a ranked row names its line the way the advice does', function () {
+    matcherCard();
+
+    Livewire::test('pages::matcher.hand-matcher')
+        ->assertSee('Flowers 1')
+        ->assertSee('Flowers 2')
+        ->assertSee('leading');
+});
