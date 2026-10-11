@@ -8,7 +8,7 @@
             "hands": [
                 {
                     "line": "FF 2026(A) 2026(B) DDDD(C)",
-                    "points": 25,
+                    "points": 30,
                     "concealed": false,
                     "variables": { "A": { "kind": "suit" }, "B": { "kind": "suit" }, "C": { "kind": "suit" } },
                     "constraints": [{"distinct":["A","B","C"]}],
