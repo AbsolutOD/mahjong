@@ -45,6 +45,15 @@
                     >
                         {{ __('Hand Matcher') }}
                     </flux:navbar.item>
+
+                    <flux:navbar.item
+                        href="{{ route('practice') }}"
+                        :current="request()->routeIs('practice')"
+                        :aria-current="request()->routeIs('practice') ? 'page' : false"
+                        wire:navigate
+                    >
+                        {{ __('Practice') }}
+                    </flux:navbar.item>
                 </flux:navbar>
             </div>
         </header>

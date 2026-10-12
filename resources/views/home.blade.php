@@ -46,7 +46,7 @@
         [
             'name' => __('Practice & Quiz'),
             'blurb' => __('Drill the things that cost you the game: whether a hand needs one suit or three, and whether that joker is actually allowed.'),
-            'route' => null,
+            'route' => route('practice'),
         ],
     ];
 @endphp
@@ -117,7 +117,7 @@
 
     <footer class="mx-auto max-w-3xl px-2 pb-12 text-center">
         <flux:text size="sm">
-            {{ __(':name teaches with its own practice card — 50 original hands written in the National Mah Jongg League\'s style. It is not the NMJL card, and none of the League\'s text is reproduced here. To play, buy their card.', ['name' => config('app.name')]) }}
+            {{ __(':name teaches with its own practice card — 54 original hands written in the National Mah Jongg League\'s style. It is not the NMJL card, and none of the League\'s text is reproduced here. To play, buy their card.', ['name' => config('app.name')]) }}
         </flux:text>
     </footer>
 </x-layouts::public>

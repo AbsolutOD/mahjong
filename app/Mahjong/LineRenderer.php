@@ -20,7 +20,20 @@ class LineRenderer
      */
     public function render(HandStructure $structure): string
     {
-        return implode(' ', array_map($this->renderGroup(...), $structure->groups));
+        return implode(' ', $this->renderGroups($structure));
+    }
+
+    /**
+     * Render a hand as its card line, one entry per group.
+     *
+     * The practice quiz points at a single group of a line, so it needs the
+     * groups the line is made of rather than the line as one string.
+     *
+     * @return list<string>
+     */
+    public function renderGroups(HandStructure $structure): array
+    {
+        return array_map($this->renderGroup(...), $structure->groups);
     }
 
     /**
