@@ -172,6 +172,35 @@
                     ]
                 },
                 {
+                    "line": "FF 222(A) 444(A) 6666(A) 88(A)",
+                    "points": 25,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" } },
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 },
+                            { "t": "num", "suit": "A", "n": 2 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 4 },
+                            { "t": "num", "suit": "A", "n": 4 },
+                            { "t": "num", "suit": "A", "n": 4 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 8 },
+                            { "t": "num", "suit": "A", "n": 8 }
+                        ]
+                    ]
+                },
+                {
                     "line": "FF 4444(A) 6666(B) 8888(C)",
                     "points": 25,
                     "concealed": false,
@@ -696,6 +725,36 @@
                     ]
                 },
                 {
+                    "line": "XXX(A) YYYY(A) ZZZ(A) DDDD(A)",
+                    "points": 30,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" }, "X": { "kind": "number", "domain": { "0": 1, "1": 2, "2": 3, "3": 4, "4": 5, "5": 6, "6": 7 } } },
+                    "groups": [
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } },
+                            { "t": "num", "suit": "A", "n": { "var": "X" } }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 1 } }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 2 } },
+                            { "t": "num", "suit": "A", "n": { "var": "X", "off": 2 } }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" }
+                        ]
+                    ]
+                },
+                {
                     "line": "FF XXX(A) YYY(B) ZZZ(C) DDD(A)",
                     "points": 30,
                     "concealed": false,
@@ -890,6 +949,35 @@
                         ],
                         [{ "t": "num", "suit": "B", "n": 1 }, { "t": "num", "suit": "B", "n": 1 }],
                         [{ "t": "dragon", "suit": "B" }, { "t": "dragon", "suit": "B" }]
+                    ]
+                },
+                {
+                    "line": "FF 111(A) 333(A) 5555(A) DD(A)",
+                    "points": 30,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" } },
+                    "groups": [
+                        [{ "t": "flower" }, { "t": "flower" }],
+                        [
+                            { "t": "num", "suit": "A", "n": 1 },
+                            { "t": "num", "suit": "A", "n": 1 },
+                            { "t": "num", "suit": "A", "n": 1 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 3 },
+                            { "t": "num", "suit": "A", "n": 3 },
+                            { "t": "num", "suit": "A", "n": 3 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 5 },
+                            { "t": "num", "suit": "A", "n": 5 },
+                            { "t": "num", "suit": "A", "n": 5 },
+                            { "t": "num", "suit": "A", "n": 5 }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" }
+                        ]
                     ]
                 },
                 {
@@ -1226,6 +1314,36 @@
                             { "t": "num", "suit": "B", "n": 9 }
                         ],
                         [{ "t": "dragon", "suit": "C" }, { "t": "dragon", "suit": "C" }]
+                    ]
+                },
+                {
+                    "line": "3333(A) 666(A) 9999(A) DDD(A)",
+                    "points": 30,
+                    "concealed": false,
+                    "variables": { "A": { "kind": "suit" } },
+                    "groups": [
+                        [
+                            { "t": "num", "suit": "A", "n": 3 },
+                            { "t": "num", "suit": "A", "n": 3 },
+                            { "t": "num", "suit": "A", "n": 3 },
+                            { "t": "num", "suit": "A", "n": 3 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 },
+                            { "t": "num", "suit": "A", "n": 6 }
+                        ],
+                        [
+                            { "t": "num", "suit": "A", "n": 9 },
+                            { "t": "num", "suit": "A", "n": 9 },
+                            { "t": "num", "suit": "A", "n": 9 },
+                            { "t": "num", "suit": "A", "n": 9 }
+                        ],
+                        [
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" },
+                            { "t": "dragon", "suit": "A" }
+                        ]
                     ]
                 },
                 {

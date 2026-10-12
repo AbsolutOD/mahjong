@@ -226,8 +226,8 @@ test('the real card ranks every one of its lines against a rack', function () {
 
     $ranked = $component->instance()->matches;
 
-    expect($ranked)->toHaveCount(50)
-        ->and($ranked[0]->tilesAway())->toBeLessThanOrEqual($ranked[49]->tilesAway());
+    expect($ranked)->toHaveCount(54)
+        ->and($ranked[0]->tilesAway())->toBeLessThanOrEqual($ranked[53]->tilesAway());
 
     foreach ($ranked as $match) {
         expect($match->tilesAway())->toBeGreaterThanOrEqual(0)->toBeLessThanOrEqual(14);

@@ -175,7 +175,7 @@ test('the practice card ships nine sections, each holding hands', function () {
 
     expect($card->name)->toBe('TileTutor Practice Card')
         ->and($card->categories)->toHaveCount(9)
-        ->and($card->hands)->toHaveCount(50);
+        ->and($card->hands)->toHaveCount(54);
 
     $card->categories->each(function ($category) {
         expect($category->hands)->not->toBeEmpty();
@@ -222,6 +222,19 @@ test('every number variable stays on the card across its whole domain', function
             }
         }
     });
+});
+
+test('the card has lines needing one, two and three suits', function () {
+    $this->seed(CardSeeder::class);
+
+    $suitCounts = Hand::all()
+        ->map(fn (Hand $hand): int => $hand->structure->suitCount())
+        ->unique()
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($suitCounts)->toContain(1, 2, 3);
 });
 
 test('the check rejects hands the tile set cannot supply', function (array $groups) {
