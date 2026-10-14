@@ -28,24 +28,38 @@ test('the front door leads into the phases that are built', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertSee(route('card'))
-        ->assertSee(route('matcher'));
+        ->assertSee(route('matcher'))
+        ->assertSee(route('practice'));
 });
 
 /**
- * The phases still to come have nowhere else to be announced — anonymous v1 has
- * no dashboard to announce them from — and a phase that ships turns from an
- * announcement into a way in.
+ * The phases still to come had nowhere else to be announced — anonymous v1 has
+ * no dashboard to announce them from — and each turned from an announcement
+ * into a way in as it shipped. With the practice suite built (issue #18), none
+ * is left to announce.
  */
-test('the front door names the phases still to come, and says they are not built', function () {
+test('the front door offers a way into every phase, and announces none as unbuilt', function () {
     $response = $this->get(route('home'))
         ->assertOk()
         ->assertSee('Hand Matcher')
         ->assertSee('Practice & Quiz')
-        ->assertSee('Not built yet');
+        ->assertDontSee('Not built yet');
 
-    /** Announced, but with nowhere to go: only a built phase offers a way in. */
-    expect(substr_count($response->getContent(), 'Open it'))->toBe(2)
-        ->and(substr_count($response->getContent(), 'Not built yet'))->toBe(1);
+    expect(substr_count($response->getContent(), 'Open it'))->toBe(3);
+});
+
+/**
+ * The footer is the page's one claim about the card's size, and it cannot read
+ * the card to check itself — nothing on this page may come from the database.
+ */
+test('the front door counts the practice card\'s hands correctly', function () {
+    $card = json_decode(file_get_contents(database_path('cards/practice-card.json')), associative: true);
+
+    $hands = array_sum(array_map(fn (array $section): int => count($section['hands']), $card['categories']));
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee("{$hands} original hands");
 });
 
 /**
@@ -75,16 +89,15 @@ test('the front door stands up with no card seeded', function () {
 });
 
 /**
- * The header carries live destinations only. Two permanently unclickable items
- * would read as broken, so the phases still to come are announced on the
- * landing page instead and the header grows a link the day one ships.
+ * The header carries live destinations only, growing a link the day a phase
+ * ships; all three now have.
  */
-test('the header carries only the phases that exist', function () {
+test('the header carries every phase that exists', function () {
     $this->get(route('card'))
         ->assertOk()
-        ->assertSee('Line Decoder')
-        ->assertSee('Hand Matcher')
-        ->assertDontSee('Practice & Quiz');
+        ->assertSee(route('card'))
+        ->assertSee(route('matcher'))
+        ->assertSee(route('practice'));
 });
 
 test('the header marks the page you are on, and only that page', function () {
@@ -102,4 +115,4 @@ test('the public shell offers no way in, because there is nothing to sign in to'
         ->assertOk()
         ->assertDontSee(route('login'))
         ->assertDontSee(route('password.request'));
-})->with(['home', 'card', 'matcher']);
+})->with(['home', 'card', 'matcher', 'practice']);

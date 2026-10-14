@@ -98,3 +98,17 @@ test('a hand renders as the line the card prints', function (array $data, string
         'FFFFFF NEWS SSSS',
     ],
 ]);
+
+test('a hand renders group by group, and the groups join back into its line', function () {
+    $structure = HandStructure::fromArray(hand([
+        repeatTile(['t' => 'flower'], 2),
+        [['t' => 'num', 'suit' => 'A', 'n' => 2], ['t' => 'zero'], ['t' => 'num', 'suit' => 'A', 'n' => 2], ['t' => 'num', 'suit' => 'A', 'n' => 6]],
+        [['t' => 'num', 'suit' => 'B', 'n' => 2], ['t' => 'zero'], ['t' => 'num', 'suit' => 'B', 'n' => 2], ['t' => 'num', 'suit' => 'B', 'n' => 6]],
+        repeatTile(['t' => 'dragon', 'suit' => 'A'], 4),
+    ], suits('A', 'B')));
+
+    $renderer = new LineRenderer;
+
+    expect($renderer->renderGroups($structure))->toBe(['FF', '2026(A)', '2026(B)', 'DDDD(A)'])
+        ->and(implode(' ', $renderer->renderGroups($structure)))->toBe($renderer->render($structure));
+});

@@ -20,6 +20,9 @@ Route::livewire('card', 'pages::card.line-decoder')->name('card');
 /** Nor does matching a rack against the card, which is the same lesson with tiles in hand. */
 Route::livewire('matcher', 'pages::matcher.hand-matcher')->name('matcher');
 
+/** Nor does drilling it, since a round is forgotten the moment the page is left (issue #18). */
+Route::livewire('practice', 'pages::practice.quiz')->name('practice');
+
 Route::get('tiles', TileReferenceController::class)->name('tiles');
 
 Route::prefix('{current_team}')
