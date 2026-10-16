@@ -7,6 +7,8 @@
 
     The tiles below are drawn from fixed `Tile`s rather than read from the
     seeded card, on purpose — see the guard in tests/Feature/FrontDoorTest.php.
+    The sample line is fixed for the same reason, and a test holds it to the
+    practice card instead.
 --}}
 @php
     use App\Data\Tiles\Tile;
@@ -28,9 +30,19 @@
     ];
 
     /**
-     * The three PRD phases, in the order they ship.
+     * A line off the practice card, opened in the decoder by its slugs.
      *
-     * @var list<array{name: string, blurb: string, route: string|null}>
+     * @var array{line: string, route: string}
+     */
+    $sample = [
+        'line' => 'FFFF 2026 222 666',
+        'route' => route('card', ['category' => 'year', 'hand' => 'ffff-2026a-222b-666b']),
+    ];
+
+    /**
+     * The three PRD phases, in the order they shipped.
+     *
+     * @var list<array{name: string, blurb: string, route: string}>
      */
     $phases = [
         [
@@ -59,8 +71,8 @@
 
         <flux:subheading size="lg" class="mt-6">
             {{ __('The card is printed in a shorthand that assumes you already know it.') }}
-            <span class="whitespace-nowrap font-mono text-sm">FFFF 2025 DDD DDD</span>
-            {{ __('is a real hand, and nothing on the card explains it.') }}
+            <a href="{{ $sample['route'] }}" class="whitespace-nowrap font-mono text-sm underline underline-offset-4" wire:navigate>{{ $sample['line'] }}</a>
+            {{ __('is a hand on our practice card, and nothing on the card explains it.') }}
             {{ __(':name reads the card out loud: every line, as tiles, in words.', ['name' => config('app.name')]) }}
         </flux:subheading>
 
@@ -81,34 +93,24 @@
 
     <section class="mx-auto max-w-5xl px-2 py-12">
         <flux:heading size="lg" level="2" class="text-center">
-            {{ __('Three ways in, as they arrive') }}
+            {{ __('Three ways in') }}
         </flux:heading>
 
         <div class="mt-8 grid gap-4 sm:grid-cols-3">
             @foreach ($phases as $phase)
-                @php($ready = $phase['route'] !== null)
-
-                <div @class([
-                    'flex flex-col gap-3 rounded-xl border p-5',
-                    'border-zinc-200 dark:border-zinc-800' => $ready,
-                    'border-dashed border-zinc-300 dark:border-zinc-700' => ! $ready,
-                ])>
-                    <div class="flex items-start justify-between gap-2">
-                        <flux:heading size="base" level="3">{{ $phase['name'] }}</flux:heading>
-
-                        <flux:badge size="sm" :color="$ready ? 'lime' : 'zinc'" inset="top">
-                            {{ $ready ? __('Ready') : __('Not built yet') }}
-                        </flux:badge>
-                    </div>
+                <a
+                    href="{{ $phase['route'] }}"
+                    class="group flex flex-col gap-3 rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
+                    wire:navigate
+                >
+                    <flux:heading size="base" level="3">{{ $phase['name'] }}</flux:heading>
 
                     <flux:text size="sm" class="grow">{{ $phase['blurb'] }}</flux:text>
 
-                    @if ($ready)
-                        <flux:button href="{{ $phase['route'] }}" size="sm" class="self-start" wire:navigate>
-                            {{ __('Open it') }}
-                        </flux:button>
-                    @endif
-                </div>
+                    <flux:text size="sm" class="font-medium text-zinc-800! group-hover:underline dark:text-white!">
+                        {{ __('Open it') }} &rarr;
+                    </flux:text>
+                </a>
             @endforeach
         </div>
     </section>
