@@ -13,8 +13,9 @@
             <livewire:team-switcher />
 
             {{--
-                The same three phases the public navbar offers (issue #50), so
-                signing in never hides a way in.
+                The same three phases the dashboard's ways in offer (issue #50).
+                None marks itself current: every phase renders in the public
+                layout, never inside this shell.
             --}}
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">

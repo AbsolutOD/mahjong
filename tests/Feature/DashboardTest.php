@@ -39,9 +39,7 @@ test('the dashboard leads into every phase', function () {
 
 /** The signed-in shell offers the same three phases as the front door's navbar. */
 test('the app shell links every phase and none of the starter kit', function (string $layout) {
-    $user = User::factory()->create();
-    $this->actingAs($user);
-    $this->get(route('dashboard'));
+    $this->actingAs(User::factory()->create());
 
     $view = $this->blade("<x-layouts::app.{$layout}>body</x-layouts::app.{$layout}>");
 
