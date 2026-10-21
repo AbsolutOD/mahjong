@@ -20,3 +20,19 @@ test('authenticated users can visit the dashboard', function () {
 
     $response->assertOk();
 });
+
+/** Why the dashboard borrows the front door's ways in is told in dashboard.blade.php. */
+test('the dashboard leads into every phase', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('dashboard'));
+
+    $response->assertOk()
+        ->assertSee(route('card'))
+        ->assertSee(route('matcher'))
+        ->assertSee(route('practice'));
+
+    expect(substr_count($response->getContent(), 'Open it'))->toBe(3);
+});
