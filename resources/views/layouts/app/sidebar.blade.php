@@ -12,25 +12,33 @@
 
             <livewire:team-switcher />
 
+            {{--
+                The same three phases the public navbar offers (issue #50), so
+                signing in never hides a way in.
+            --}}
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Learn')" class="grid">
+                    <flux:sidebar.item icon="book-open" :href="route('card')" wire:navigate>
+                        {{ __('Line Decoder') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="puzzle-piece" :href="route('matcher')" wire:navigate>
+                        {{ __('Hand Matcher') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="academic-cap" :href="route('practice')" wire:navigate>
+                        {{ __('Practice & Quiz') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
