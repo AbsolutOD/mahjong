@@ -20,8 +20,7 @@
                 </a>
 
                 {{--
-                    Live destinations only, so this grows a link the day a phase
-                    ships; the ones still to come are announced on the landing page.
+                    One link per phase, the same three the landing page offers.
 
                     `aria-current` is set by hand because Flux marks the current item
                     with `data-current`, which styles the link but tells a screen

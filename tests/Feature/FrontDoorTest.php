@@ -2,6 +2,7 @@
 
 use App\Data\Tiles\Tile;
 use App\Data\Tiles\TileFace;
+use App\Mahjong\Slug;
 use App\Models\Card;
 
 /**
@@ -60,6 +61,37 @@ test('the front door counts the practice card\'s hands correctly', function () {
     $this->get(route('home'))
         ->assertOk()
         ->assertSee("{$hands} original hands");
+});
+
+/**
+ * The hero's sample line is fixed, like everything else here, so it is held to
+ * the practice card the way the footer's count is: by replaying the import's
+ * slugs over the card file. Editing that hand off the card fails this, rather
+ * than leaving the front door linking to a line the decoder no longer has.
+ */
+test('the front door\'s sample line is on the practice card, and opens it in the decoder', function () {
+    $card = json_decode(file_get_contents(database_path('cards/practice-card.json')), associative: true);
+    $slugs = new Slug;
+    $link = null;
+
+    foreach ($card['categories'] as $section) {
+        $category = $slugs->forCategory($section['name']);
+
+        foreach ($section['hands'] as $hand) {
+            $hand['slug'] = $slugs->forLine($hand['line'], $hand['concealed']);
+
+            if (preg_replace('/\([A-Z]\)/', '', $hand['line']) === 'FFFF 2026 222 666') {
+                $link = route('card', ['category' => $category, 'hand' => $hand['slug']]);
+            }
+        }
+    }
+
+    expect($link)->not->toBeNull();
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('FFFF 2026 222 666')
+        ->assertSee($link);
 });
 
 /**
