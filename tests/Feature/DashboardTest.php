@@ -36,3 +36,16 @@ test('the dashboard leads into every phase', function () {
 
     expect(substr_count($response->getContent(), 'Open it'))->toBe(3);
 });
+
+/** The signed-in shell offers the same three phases as the front door's navbar. */
+test('the app shell links every phase and none of the starter kit', function (string $layout) {
+    $this->actingAs(User::factory()->create());
+
+    $view = $this->blade("<x-layouts::app.{$layout}>body</x-layouts::app.{$layout}>");
+
+    $view->assertSee(route('card'))
+        ->assertSee(route('matcher'))
+        ->assertSee(route('practice'))
+        ->assertDontSee('livewire-starter-kit')
+        ->assertDontSee('docs/starter-kits');
+})->with(['sidebar', 'header']);
