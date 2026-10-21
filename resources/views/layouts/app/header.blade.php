@@ -13,15 +13,11 @@
                 <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:navbar.item>
-                <flux:navbar.item icon="book-open" :href="route('card')" wire:navigate>
-                    {{ __('Line Decoder') }}
-                </flux:navbar.item>
-                <flux:navbar.item icon="puzzle-piece" :href="route('matcher')" wire:navigate>
-                    {{ __('Hand Matcher') }}
-                </flux:navbar.item>
-                <flux:navbar.item icon="academic-cap" :href="route('practice')" wire:navigate>
-                    {{ __('Practice & Quiz') }}
-                </flux:navbar.item>
+                @foreach (App\Enums\Phase::cases() as $phase)
+                    <flux:navbar.item :icon="$phase->icon()" :href="$phase->url()" wire:navigate>
+                        {{ $phase->label() }}
+                    </flux:navbar.item>
+                @endforeach
             </flux:navbar>
 
             <flux:spacer />
@@ -50,15 +46,11 @@
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Learn')">
-                    <flux:sidebar.item icon="book-open" :href="route('card')" wire:navigate>
-                        {{ __('Line Decoder') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="puzzle-piece" :href="route('matcher')" wire:navigate>
-                        {{ __('Hand Matcher') }}
-                    </flux:sidebar.item>
-                    <flux:sidebar.item icon="academic-cap" :href="route('practice')" wire:navigate>
-                        {{ __('Practice & Quiz') }}
-                    </flux:sidebar.item>
+                    @foreach (App\Enums\Phase::cases() as $phase)
+                        <flux:sidebar.item :icon="$phase->icon()" :href="$phase->url()" wire:navigate>
+                            {{ $phase->label() }}
+                        </flux:sidebar.item>
+                    @endforeach
                 </flux:sidebar.group>
             </flux:sidebar.nav>
         </flux:sidebar>

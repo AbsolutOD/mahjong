@@ -25,17 +25,11 @@
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Learn')" class="grid">
-                    <flux:sidebar.item icon="book-open" :href="route('card')" wire:navigate>
-                        {{ __('Line Decoder') }}
-                    </flux:sidebar.item>
-
-                    <flux:sidebar.item icon="puzzle-piece" :href="route('matcher')" wire:navigate>
-                        {{ __('Hand Matcher') }}
-                    </flux:sidebar.item>
-
-                    <flux:sidebar.item icon="academic-cap" :href="route('practice')" wire:navigate>
-                        {{ __('Practice & Quiz') }}
-                    </flux:sidebar.item>
+                    @foreach (App\Enums\Phase::cases() as $phase)
+                        <flux:sidebar.item :icon="$phase->icon()" :href="$phase->url()" wire:navigate>
+                            {{ $phase->label() }}
+                        </flux:sidebar.item>
+                    @endforeach
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
