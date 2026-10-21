@@ -1,9 +1,9 @@
 {{--
     The front door (issue #32).
 
-    Anonymous v1 has no dashboard behind a login, so `/` is the whole front
-    door: the only place the product gets to say what it is before a visitor
-    is dropped into the workbench.
+    Anonymous v1 asks for no login, so `/` is the whole front door: the only
+    place the product gets to say what it is before a visitor is dropped into
+    the workbench. The signed-in dashboard offers the same ways in (#47).
 
     The tiles below are drawn from fixed `Tile`s rather than read from the
     seeded card, on purpose — see the guard in tests/Feature/FrontDoorTest.php.
@@ -37,29 +37,6 @@
     $sample = [
         'line' => 'FFFF 2026 222 666',
         'route' => route('card', ['category' => 'year', 'hand' => 'ffff-2026a-222b-666b']),
-    ];
-
-    /**
-     * The three PRD phases, in the order they shipped.
-     *
-     * @var list<array{name: string, blurb: string, route: string}>
-     */
-    $phases = [
-        [
-            'name' => __('Line Decoder'),
-            'blurb' => __('Read any line on the card as tiles, in plain English: what each group is, which suits have to differ, and where a joker is legal.'),
-            'route' => route('card'),
-        ],
-        [
-            'name' => __('Hand Matcher'),
-            'blurb' => __('Lay out your rack and see which lines you are closest to, how many tiles away each one is, which tiles you are still short of, and which to pass in the Charleston.'),
-            'route' => route('matcher'),
-        ],
-        [
-            'name' => __('Practice & Quiz'),
-            'blurb' => __('Drill the things that cost you the game: whether a hand needs one suit or three, and whether that joker is actually allowed.'),
-            'route' => route('practice'),
-        ],
     ];
 @endphp
 
@@ -96,23 +73,7 @@
             {{ __('Three ways in') }}
         </flux:heading>
 
-        <div class="mt-8 grid gap-4 sm:grid-cols-3">
-            @foreach ($phases as $phase)
-                <a
-                    href="{{ $phase['route'] }}"
-                    class="group flex flex-col gap-3 rounded-xl border border-zinc-200 p-5 transition hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
-                    wire:navigate
-                >
-                    <flux:heading size="base" level="3">{{ $phase['name'] }}</flux:heading>
-
-                    <flux:text size="sm" class="grow">{{ $phase['blurb'] }}</flux:text>
-
-                    <flux:text size="sm" class="font-medium text-zinc-800! group-hover:underline dark:text-white!">
-                        {{ __('Open it') }} &rarr;
-                    </flux:text>
-                </a>
-            @endforeach
-        </div>
+        <x-ways-in class="mt-8" />
     </section>
 
     <flux:separator class="my-4" />
