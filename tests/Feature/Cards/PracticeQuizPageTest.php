@@ -2,6 +2,7 @@
 
 use App\Actions\Cards\LoadCurrentCard;
 use App\Data\Practice\Question;
+use App\Enums\Phase;
 use App\Enums\QuestionKind;
 use App\Mahjong\LineRenderer;
 use App\Mahjong\PracticeQuiz;
@@ -43,6 +44,16 @@ test('practice is public, because drilling the card needs no account', function 
     $this->get(route('practice'))
         ->assertOk()
         ->assertSee('Question 1 of 10');
+});
+
+/**
+ * The page's heading had drifted to "Practice" alone; it names the phase the
+ * way every nav does (issue #53). Rendered without the layout, so the page's
+ * `<title>` cannot pass this on the heading's behalf.
+ */
+test('a round is headed with the phase\'s name', function () {
+    Livewire::test('pages::practice.quiz')
+        ->assertSee(Phase::PracticeAndQuiz->label());
 });
 
 test('a round is ten questions about lines the real card prints, half of each kind', function () {
