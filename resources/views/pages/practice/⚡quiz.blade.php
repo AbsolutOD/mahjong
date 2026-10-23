@@ -224,7 +224,7 @@ new #[Layout('layouts::public')] #[Title('Practice & Quiz')] class extends Compo
         @php($question = $this->question)
 
         <div class="flex items-baseline justify-between gap-4">
-            <flux:heading size="lg" level="1">{{ __('Practice') }}</flux:heading>
+            <flux:heading size="lg" level="1">{{ App\Enums\Phase::PracticeAndQuiz->label() }}</flux:heading>
 
             <flux:text size="sm">
                 {{ __('Question :number of :total · :score right so far', ['number' => $position + 1, 'total' => count($this->questions), 'score' => $this->score]) }}

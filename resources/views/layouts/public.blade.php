@@ -27,32 +27,21 @@
                     reader nothing.
                 --}}
                 <flux:navbar>
-                    <flux:navbar.item
-                        href="{{ route('card') }}"
-                        :current="request()->routeIs('card')"
-                        :aria-current="request()->routeIs('card') ? 'page' : false"
-                        wire:navigate
-                    >
-                        {{ __('Line Decoder') }}
-                    </flux:navbar.item>
-
-                    <flux:navbar.item
-                        href="{{ route('matcher') }}"
-                        :current="request()->routeIs('matcher')"
-                        :aria-current="request()->routeIs('matcher') ? 'page' : false"
-                        wire:navigate
-                    >
-                        {{ __('Hand Matcher') }}
-                    </flux:navbar.item>
-
-                    <flux:navbar.item
-                        href="{{ route('practice') }}"
-                        :current="request()->routeIs('practice')"
-                        :aria-current="request()->routeIs('practice') ? 'page' : false"
-                        wire:navigate
-                    >
-                        {{ __('Practice') }}
-                    </flux:navbar.item>
+                    @foreach (App\Enums\Phase::cases() as $phase)
+                        <flux:navbar.item
+                            :href="$phase->url()"
+                            :current="$phase->isCurrent()"
+                            :aria-current="$phase->isCurrent() ? 'page' : false"
+                            wire:navigate
+                        >
+                            @if ($phase->shortLabel() === $phase->label())
+                                {{ $phase->label() }}
+                            @else
+                                <span class="sm:hidden">{{ $phase->shortLabel() }}</span>
+                                <span class="max-sm:hidden">{{ $phase->label() }}</span>
+                            @endif
+                        </flux:navbar.item>
+                    @endforeach
                 </flux:navbar>
             </div>
         </header>
