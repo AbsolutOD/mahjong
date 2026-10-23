@@ -4,6 +4,7 @@ use App\Data\Tiles\Tile;
 use App\Data\Tiles\TileFace;
 use App\Mahjong\Slug;
 use App\Models\Card;
+use App\Models\User;
 
 /**
  * The front door — the landing page at `/` and the shell around it (issue #32).
@@ -147,4 +148,25 @@ test('the public shell offers no way in, because there is nothing to sign in to'
         ->assertOk()
         ->assertDontSee(route('login'))
         ->assertDontSee(route('password.request'));
+})->with(['home', 'card', 'matcher', 'practice']);
+
+/**
+ * The phases render in the public shell for everyone, so a signed-in learner
+ * who opens one needs the header to lead back to their account (issues #51, #54).
+ */
+test('the public shell leads a signed-in user back to their account', function (string $route) {
+    $this->actingAs(User::factory()->create());
+
+    $this->get(route($route))
+        ->assertOk()
+        ->assertSee(route('dashboard'))
+        ->assertSee(route('profile.edit'))
+        ->assertSee(route('logout'));
+})->with(['home', 'card', 'matcher', 'practice']);
+
+test('the public shell shows a guest no account', function (string $route) {
+    $this->get(route($route))
+        ->assertOk()
+        ->assertDontSee(route('logout'))
+        ->assertDontSee(route('profile.edit'));
 })->with(['home', 'card', 'matcher', 'practice']);
