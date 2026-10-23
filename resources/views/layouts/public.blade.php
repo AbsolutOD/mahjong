@@ -56,31 +56,14 @@
                                 <flux:avatar :initials="auth()->user()->initials()" size="sm" circle />
                             </button>
 
-                            <flux:menu>
-                                <div class="grid px-1 py-1.5 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
-                                </div>
-                                <flux:menu.separator />
-                                <flux:menu.item :href="route('dashboard')" icon="layout-grid" wire:navigate>
-                                    {{ __('Dashboard') }}
-                                </flux:menu.item>
-                                <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
-                                    {{ __('Settings') }}
-                                </flux:menu.item>
-                                <form method="POST" action="{{ route('logout') }}" class="w-full">
-                                    @csrf
-                                    <flux:menu.item
-                                        as="button"
-                                        type="submit"
-                                        icon="arrow-right-start-on-rectangle"
-                                        class="w-full cursor-pointer"
-                                        data-test="logout-button"
-                                    >
-                                        {{ __('Log out') }}
+                            <x-account-menu>
+                                {{-- The dashboard lives under the current team, so without one there is none to go back to. --}}
+                                @if (auth()->user()->currentTeam)
+                                    <flux:menu.item :href="route('dashboard')" icon="layout-grid" wire:navigate>
+                                        {{ __('Dashboard') }}
                                     </flux:menu.item>
-                                </form>
-                            </flux:menu>
+                                @endif
+                            </x-account-menu>
                         </flux:dropdown>
                     @endauth
                 </div>
