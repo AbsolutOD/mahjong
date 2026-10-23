@@ -45,6 +45,22 @@ test('the signed-in header lists every phase in both its navbar and its mobile m
 });
 
 /**
+ * "Practice & Quiz" crowds the public header on a phone, so below the `sm`
+ * breakpoint the navbar falls back to the phase's short name.
+ */
+test('the public navbar names a phase by its short name on a small screen', function () {
+    $this->blade('<x-layouts::public>body</x-layouts::public>')
+        ->assertSee('<span class="sm:hidden">'.e(Phase::PracticeAndQuiz->shortLabel()).'</span>', escape: false)
+        ->assertSee('<span class="max-sm:hidden">'.e(Phase::PracticeAndQuiz->label()).'</span>', escape: false);
+});
+
+test('only the practice phase has a short name', function () {
+    expect(Phase::PracticeAndQuiz->shortLabel())->toBe('Practice')
+        ->and(Phase::LineDecoder->shortLabel())->toBe(Phase::LineDecoder->label())
+        ->and(Phase::HandMatcher->shortLabel())->toBe(Phase::HandMatcher->label());
+});
+
+/**
  * A `#[Title]` attribute cannot call into the enum, so each page spells its
  * phase's name out once more; this keeps that spelling honest.
  */

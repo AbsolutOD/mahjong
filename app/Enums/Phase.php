@@ -28,6 +28,18 @@ enum Phase: string
     }
 
     /**
+     * Get the name the public navbar falls back to on a small screen, where
+     * the full name crowds the header.
+     */
+    public function shortLabel(): string
+    {
+        return match ($this) {
+            self::PracticeAndQuiz => __('Practice'),
+            default => $this->label(),
+        };
+    }
+
+    /**
      * Get the line the ways in say about the phase.
      */
     public function blurb(): string

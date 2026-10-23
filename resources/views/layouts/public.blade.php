@@ -34,7 +34,12 @@
                             :aria-current="$phase->isCurrent() ? 'page' : false"
                             wire:navigate
                         >
-                            {{ $phase->label() }}
+                            @if ($phase->shortLabel() === $phase->label())
+                                {{ $phase->label() }}
+                            @else
+                                <span class="sm:hidden">{{ $phase->shortLabel() }}</span>
+                                <span class="max-sm:hidden">{{ $phase->label() }}</span>
+                            @endif
                         </flux:navbar.item>
                     @endforeach
                 </flux:navbar>
