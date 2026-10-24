@@ -4,6 +4,8 @@ use App\Data\Tiles\Tile;
 use App\Data\Tiles\TileFace;
 use App\Mahjong\Slug;
 use App\Models\Card;
+use App\Models\User;
+use Illuminate\Support\Facades\URL;
 
 /**
  * The front door — the landing page at `/` and the shell around it (issue #32).
@@ -142,9 +144,52 @@ test('the header marks the page you are on, and only that page', function () {
         ->assertDontSee('aria-current="page"', escape: false);
 });
 
+/** The front door and every phase, which all render in the public shell. */
+dataset('public pages', ['home', 'card', 'matcher', 'practice']);
+
 test('the public shell offers no way in, because there is nothing to sign in to', function (string $route) {
     $this->get(route($route))
         ->assertOk()
         ->assertDontSee(route('login'))
         ->assertDontSee(route('password.request'));
-})->with(['home', 'card', 'matcher', 'practice']);
+})->with('public pages');
+
+/**
+ * The phases render in the public shell for everyone, so a signed-in learner
+ * who opens one needs the header to lead back to their account (issues #51, #54).
+ */
+test('the public shell leads a signed-in user back to their account', function (string $route) {
+    $this->actingAs(User::factory()->create());
+
+    $this->get(route($route))
+        ->assertOk()
+        ->assertSee(route('dashboard'))
+        ->assertSee(route('profile.edit'))
+        ->assertSee(route('logout'));
+})->with('public pages');
+
+test('the public shell shows a guest no account', function (string $route) {
+    $this->get(route($route))
+        ->assertOk()
+        ->assertDontSee('/dashboard')
+        ->assertDontSee(route('logout'))
+        ->assertDontSee(route('profile.edit'));
+})->with('public pages');
+
+/**
+ * The dashboard lives under the current team, so a user without one has no
+ * dashboard to go back to, and the front door must not fall over looking for it.
+ */
+test('the public shell still opens for a signed-in user with no current team', function (string $route) {
+    $user = User::factory()->create();
+    $user->forceFill(['current_team_id' => null])->save();
+
+    /** Creating the user switched it to a team, which set the URL default a real request would not have. */
+    URL::defaults(['current_team' => null, 'team' => null]);
+
+    $this->actingAs($user->fresh())
+        ->get(route($route))
+        ->assertOk()
+        ->assertDontSee('/dashboard')
+        ->assertSee(route('logout'));
+})->with('public pages');
